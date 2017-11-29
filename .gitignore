@@ -1,5 +1,5 @@
 # Others
-/Test_Data/*.txt
+Test_Data/*
 *.ps1
 
 # Byte-compiled / optimized / DLL files
