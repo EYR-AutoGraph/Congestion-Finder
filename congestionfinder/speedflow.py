@@ -6,8 +6,8 @@ def parseDetectionsToSpeedsAndFlows(detections, road):
     spaceToSpaceIndex = road.getSpaceToSpaceIndex()
     maxSpaceIndex = max(spaceToSpaceIndex.values()) + 1
     maxTimeIndex = 1440 # Trivial now, but perhaps important later.
-    speeds = numpy.full((maxSpaceIndex, maxTimeIndex), numpy.nan, dtype=numpy.int32)
-    flows = numpy.full((maxSpaceIndex, maxTimeIndex), numpy.nan, dtype=numpy.int32)
+    speeds = numpy.full((maxSpaceIndex, maxTimeIndex), numpy.nan)
+    flows = numpy.full((maxSpaceIndex, maxTimeIndex), numpy.nan)
     minFoundSpaceIndex = maxSpaceIndex
     maxFoundSpaceIndex = 0
     minFoundTimeIndex = maxTimeIndex
@@ -63,5 +63,5 @@ def writeSpeedsAndFlowsToCSV(speeds, flows, congestionBoundariesList, outputDire
         flowsFileName = outputDirectory + "\\" + str(date) + "_" + str(roadNumber) + "_f_" + str(minSpaceIndex) + "-" + str(maxSpaceIndex) + "_" + str(minTimeIndex) + "-" + str(maxTimeIndex) + ".csv.gz"
         boundedSpeeds = speeds[minSpaceIndex:maxSpaceIndex, minTimeIndex:maxTimeIndex]
         boundedFlows = flows[minSpaceIndex:maxSpaceIndex, minTimeIndex:maxTimeIndex]
-        numpy.savetxt(speedsFileName, boundedSpeeds, fmt = "%d", delimiter = ",")
-        numpy.savetxt(flowsFileName, boundedFlows, fmt = "%d", delimiter = ",")
+        numpy.savetxt(speedsFileName, boundedSpeeds, fmt = "%s", delimiter = ",")
+        numpy.savetxt(flowsFileName, boundedFlows, fmt = "%s", delimiter = ",")

@@ -16,34 +16,27 @@ class Detection:
         self.speed = speed
         self.flow = flow
 
-    @property
-    def getCode(self):
+    def getCode(self) -> str:
         return self.code
 
-    @property
-    def getSpace(self):
+    def getSpace(self) -> int:
         return self.space
 
-    @property
-    def getTime(self):
+    def getTime(self) -> int:
         return self.time
 
-    @property
-    def getSpeed(self):
+    def getSpeed(self) -> int:
         return self.speed
 
-    @property
-    def getFlow(self):
+    def getFlow(self) -> int:
         return self.flow
 
-    @property
-    def __str__(self):
-        stringTemplate = "code: {} | space: {} | time: {} | speed: {} | flow: {}"
-        templateElements = [self.code, self.space, self.time, self.speed, self.flow]
-        return stringTemplate.format(*templateElements)
+    def __str__(self) -> str:
+        template = "code: {} | space: {} | time: {} | speed: {} | flow: {}"
+        return template.format(self.code, self.space, self.time, self.speed, self.flow)
 
 
-def readCSVToDetections(fileName):
+def readCSVToDetections(fileName) -> set:
     print("Starting readCSVToDetections()")
     result = set()
     with open(fileName, "r") as file:
