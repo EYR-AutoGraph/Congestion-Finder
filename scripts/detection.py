@@ -1,0 +1,65 @@
+import csv
+import time as time_module
+
+
+class Detection:
+    code = None
+    space = None
+    time = None
+    speed = None
+    flow = None
+
+    def __init__(self, code, space, time, speed, flow):
+        self.code = code
+        self.space = space
+        self.time = time
+        self.speed = speed
+        self.flow = flow
+
+    @property
+    def getCode(self):
+        return self.code
+
+    @property
+    def getSpace(self):
+        return self.space
+
+    @property
+    def getTime(self):
+        return self.time
+
+    @property
+    def getSpeed(self):
+        return self.speed
+
+    @property
+    def getFlow(self):
+        return self.flow
+
+    @property
+    def __str__(self):
+        stringTemplate = "code: {} | space: {} | time: {} | speed: {} | flow: {}"
+        templateElements = [self.code, self.space, self.time, self.speed, self.flow]
+        return stringTemplate.format(*templateElements)
+
+
+def readCSVToDetections(fileName):
+    print("Starting readCSVToDetections()")
+    result = set()
+    with open(fileName, "r") as file:
+        reader = csv.reader(file, delimiter=" ")
+        next(reader, None)
+        next(reader, None)
+        next(reader, None)
+        for row in reader:
+            if len(row) > 1 and row[2] == "R-":
+                code = row[0]
+                space = int(row[1][:-1])
+                timeObject = time_module.strptime(row[6], "%H:%M")
+                time = 60 * timeObject.tm_hour + timeObject.tm_min
+                speed = int(row[9])
+                flow = float(row[8]) / float(row[4])
+                detection = Detection(code, space, time, speed, flow)
+                result.add(detection)
+    print("Ending readCSVToDetections()")
+    return result
