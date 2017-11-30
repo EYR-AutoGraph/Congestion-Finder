@@ -1,6 +1,7 @@
 # Others
-Test_Data/*
+tests/data/*
 *.ps1
+.idea/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
