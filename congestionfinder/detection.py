@@ -1,7 +1,6 @@
 import csv
 import time as time_module
 import logging
-logging.basicConfig(format='%(asctime)s %(message)s')
 
 
 class Detection:

@@ -2,7 +2,6 @@ import numpy
 import scipy.interpolate
 import scipy.ndimage
 import logging
-logging.basicConfig(format='%(asctime)s %(message)s')
 
 
 def parseSpeedFlowsToCongestions(speeds, flows):

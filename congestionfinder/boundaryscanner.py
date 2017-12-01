@@ -2,7 +2,6 @@ import numpy
 import matplotlib.pyplot
 import matplotlib.patches
 import logging
-logging.basicConfig(format='%(asctime)s %(message)s')
 
 
 def scanForBoundaries(dataArray, boundaries = None, threshold = 1, depth = 0):
@@ -54,8 +53,6 @@ def recursiveScanForBoundaries(dataArray, boundaries = None, depth = 0, parentLe
     logging.debug("  " * depth + "Direction: " + str(depth % 2))
     result = []
     boundariesList = scanForBoundaries(dataArray, boundaries, threshold, depth)
-    if True:  # Add debug logger
-        plotCongestionsWithBoundaries(dataArray, boundariesList)
     length = len(boundariesList)
     logging.debug("  " * depth + "length: " + str(length) + "| parentLength: " + str(parentLength))
     if length == 0:
@@ -73,6 +70,8 @@ def recursiveScanForBoundaries(dataArray, boundaries = None, depth = 0, parentLe
             result += recursiveScanForBoundaries(dataArray, childBoundaries, childDepth, parentLength, threshold)
     logging.debug("  " * depth + "Ending recursiveScanForBoundaries()")
     return result
+
+
 def filterLargeCongestions(congestionBoundariesList):
     result = []
     for congestionBoundaries in congestionBoundariesList:

@@ -1,6 +1,5 @@
 import csv
 import logging
-logging.basicConfig(format='%(asctime)s %(message)s')
 
 
 class BPSDetector:

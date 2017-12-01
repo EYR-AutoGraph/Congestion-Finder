@@ -1,6 +1,5 @@
 import congestionfinder
 import logging
-logging.basicConfig(format='%(asctime)s %(message)s')
 
 
 class Road:

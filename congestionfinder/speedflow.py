@@ -1,6 +1,6 @@
 import numpy
 import logging
-logging.basicConfig(format='%(asctime)s %(message)s') ## Remove here and move up?
+
 
 def parseDetectionsToSpeedsAndFlows(detections, road):
     logging.debug("Starting parseDetectionsToSpeedFlows()")
@@ -67,4 +67,4 @@ def writeSpeedsAndFlowsToCSV(speeds, flows, congestionBoundariesList, outputDire
         boundedFlows = flows[minSpaceIndex:maxSpaceIndex, minTimeIndex:maxTimeIndex]
         numpy.savetxt(speedsFileName, boundedSpeeds, fmt = "%s", delimiter = ",")
         numpy.savetxt(flowsFileName, boundedFlows, fmt = "%s", delimiter = ",")
-    logging.debug("Ending removeMissingDetectors()")
+    logging.debug("Ending writeSpeedsAndFlowsToCSV()")
