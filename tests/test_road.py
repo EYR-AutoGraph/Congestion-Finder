@@ -1,56 +1,56 @@
 import unittest
-import congestionfinder.bpsdetector
+import congestionfinder.road
 import logging
 
 logging.getLogger().level = logging.DEBUG
 
 
-class TestBPSDetector(unittest.TestCase):
-    def test_getBPSCode(self):
-        input = "00D00C03405B18200005"
-        expected = input
-        bpsDetector = congestionfinder.bpsdetector.BPSDetector(input)
-        output = bpsDetector.getBPSCode()
-        logging.debug("input: " + str(input))
-        logging.debug("expected: " + str(expected))
-        logging.debug("output: " + str(output))
-        self.assertEqual(expected, output)
-
+class TestRoad(unittest.TestCase):
     def test_getRoadNumber(self):
-        input = "00D00C03405B18200005"
-        expected = 12
-        bpsDetector = congestionfinder.bpsdetector.BPSDetector(input)
-        output = bpsDetector.getRoadNumber()
+        input = 3
+        expected = input
+        road = congestionfinder.road.Road(input)
+        output = road.getRoadNumber()
         logging.debug("input: " + str(input))
         logging.debug("expected: " + str(expected))
         logging.debug("output: " + str(output))
         self.assertEqual(expected, output)
 
-    def test_getHectometer(self):
-        input = "00D00C03405B18200005"
-        expected = 208
-        bpsDetector = congestionfinder.bpsdetector.BPSDetector(input)
-        output = bpsDetector.getHectometer()
+    def test_addBPSDetector(self):
+        input = 3
+        expected = input
+        road = congestionfinder.road.Road(input)
+        output = road.getRoadNumber()
         logging.debug("input: " + str(input))
         logging.debug("expected: " + str(expected))
         logging.debug("output: " + str(output))
         self.assertEqual(expected, output)
 
-    def test_getAdditionalMeters(self):
-        input = "00D00C03405B18200005"
-        expected = 91
-        bpsDetector = congestionfinder.bpsdetector.BPSDetector(input)
-        output = bpsDetector.getAdditionalMeters()
+    def test_indexDetectorSpaces(self):
+        input = 3
+        expected = input
+        road = congestionfinder.road.Road(input)
+        output = road.getRoadNumber()
         logging.debug("input: " + str(input))
         logging.debug("expected: " + str(expected))
         logging.debug("output: " + str(output))
         self.assertEqual(expected, output)
 
-    def test_getMeter(self):
-        input = "00D00C03405B18200005"
-        expected = 20891
-        bpsDetector = congestionfinder.bpsdetector.BPSDetector(input)
-        output = bpsDetector.getMeter()
+    def test_getBPSDetectors(self):
+        input = 3
+        expected = input
+        road = congestionfinder.road.Road(input)
+        output = road.getRoadNumber()
+        logging.debug("input: " + str(input))
+        logging.debug("expected: " + str(expected))
+        logging.debug("output: " + str(output))
+        self.assertEqual(expected, output)
+
+    def test_getSpaceToSpaceIndex(self):
+        input = 3
+        expected = input
+        road = congestionfinder.road.Road(input)
+        output = road.getRoadNumber()
         logging.debug("input: " + str(input))
         logging.debug("expected: " + str(expected))
         logging.debug("output: " + str(output))

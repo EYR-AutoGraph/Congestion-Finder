@@ -13,6 +13,9 @@ class Road:
         self.bpsDetectors = set()
         self.spaceToSpaceIndex = dict()
 
+    def getRoadNumber(self) -> int:
+        return self.roadNumber
+
     def addBPSDetector(self, bpsDetector):
         self.bpsDetectors.add(bpsDetector)
 
