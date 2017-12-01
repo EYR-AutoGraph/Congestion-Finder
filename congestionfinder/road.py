@@ -16,6 +16,12 @@ class Road:
     def getRoadNumber(self) -> int:
         return self.roadNumber
 
+    def getBPSDetectors(self) -> set:
+        return self.bpsDetectors
+
+    def getSpaceToSpaceIndex(self) -> dict:
+        return self.spaceToSpaceIndex
+
     def addBPSDetector(self, bpsDetector):
         self.bpsDetectors.add(bpsDetector)
 
@@ -26,12 +32,6 @@ class Road:
         sortedSpaceSet = sorted(spaceSet)
         for spaceIndex in range(len(sortedSpaceSet)):
             self.spaceToSpaceIndex[sortedSpaceSet[spaceIndex]] = spaceIndex
-
-    def getBPSDetectors(self) -> set:
-        return self.bpsDetectors
-
-    def getSpaceToSpaceIndex(self) -> dict:
-        return self.spaceToSpaceIndex
 
     def __str__(self):
         template = "roadNumber: {} | len(bpsDetectors): {} | len(spaceToSpaceIndex): {}"
