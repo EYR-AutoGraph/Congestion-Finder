@@ -15,7 +15,7 @@ class BPSDetector:
         self.hectometer = extractAttribute(bpsCode, 24, 38)
         self.additionalMeters = extractAttribute(bpsCode, 38, 48)
 
-    def getBPSCoder(self) -> str:
+    def getBPSCode(self) -> str:
         return self.bpsCode
 
     def getRoadNumber(self) -> int:

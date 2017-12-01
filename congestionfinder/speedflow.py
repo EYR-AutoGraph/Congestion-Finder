@@ -1,6 +1,6 @@
 import numpy
 import logging
-logging.basicConfig(format='%(asctime)s %(message)s')
+logging.basicConfig(format='%(asctime)s %(message)s') ## Remove here and move up?
 
 def parseDetectionsToSpeedsAndFlows(detections, road):
     logging.debug("Starting parseDetectionsToSpeedFlows()")
