@@ -1,4 +1,6 @@
 import csv
+import logging
+logging.basicConfig(format='%(asctime)s %(message)s')
 
 
 class BPSDetector:
@@ -38,12 +40,12 @@ def extractAttribute(bpsCode: str, startBit: int, endBit: int) -> int:
 
 
 def readCSVToBPSCodes(fileName: str) -> object:
-    print("Starting readCSVToBPSCodes()")
+    logging.debug("Starting readCSVToBPSCodes()")
     result = []
     with open(fileName, "r") as file:
         reader = csv.reader(file)
         for row in reader:
             if row[3] == "R":
                 result.append(row[0])
-    print("Ending readCSVToBPSCodes()")
+    logging.debug("Ending readCSVToBPSCodes()")
     return result

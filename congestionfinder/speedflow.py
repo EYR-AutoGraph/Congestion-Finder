@@ -1,8 +1,9 @@
 import numpy
-
+import logging
+logging.basicConfig(format='%(asctime)s %(message)s')
 
 def parseDetectionsToSpeedsAndFlows(detections, road):
-    print("Starting parseDetectionsToSpeedFlows()")
+    logging.debug("Starting parseDetectionsToSpeedFlows()")
     spaceToSpaceIndex = road.getSpaceToSpaceIndex()
     maxSpaceIndex = max(spaceToSpaceIndex.values()) + 1
     maxTimeIndex = 1440 # Trivial now, but perhaps important later.
@@ -31,29 +32,30 @@ def parseDetectionsToSpeedsAndFlows(detections, road):
         flows[spaceIndex, timeIndex] = flow
     speeds = speeds[minFoundSpaceIndex:maxFoundSpaceIndex + 1, minFoundTimeIndex:maxFoundTimeIndex + 1]
     flows = flows[minFoundSpaceIndex:maxFoundSpaceIndex + 1, minFoundTimeIndex:maxFoundTimeIndex + 1]
-    print("Ending parseDetectionsToSpeedFlows()")
+    logging.debug("Ending parseDetectionsToSpeedFlows()")
     return speeds, flows, minFoundSpaceIndex, maxFoundSpaceIndex, minFoundTimeIndex, maxFoundTimeIndex
 
 
 def removeLowFlowTimes(speeds, flows):
-    print("Starting removeLowFlowTimes()")
+    logging.debug("Starting removeLowFlowTimes()")
     mask = numpy.nanmean(flows, axis=0) > 10
     speeds = speeds[:, mask]
     flows = flows[:, mask]
-    print("Ending removeLowFlowTimes()")
+    logging.debug("Ending removeLowFlowTimes()")
     return speeds, flows, mask
 
 
 def removeMissingDetectors(speeds, flows):
-    print("Starting removeMissingDetectors()")
+    logging.debug("Starting removeMissingDetectors()")
     mask = ~numpy.isnan(speeds).all(axis=1)
     speeds = speeds[mask]
     flows = flows[mask]
-    print("Ending removeMissingDetectors()")
+    logging.debug("Ending removeMissingDetectors()")
     return speeds, flows, mask
 
 
 def writeSpeedsAndFlowsToCSV(speeds, flows, congestionBoundariesList, outputDirectory, date, roadNumber):
+    logging.debug("Starting writeSpeedsAndFlowsToCSV()")
     for congestionBoundaries in congestionBoundariesList:
         minSpaceIndex = congestionBoundaries[0] # Index to Space
         maxSpaceIndex = congestionBoundaries[1]
@@ -65,3 +67,4 @@ def writeSpeedsAndFlowsToCSV(speeds, flows, congestionBoundariesList, outputDire
         boundedFlows = flows[minSpaceIndex:maxSpaceIndex, minTimeIndex:maxTimeIndex]
         numpy.savetxt(speedsFileName, boundedSpeeds, fmt = "%s", delimiter = ",")
         numpy.savetxt(flowsFileName, boundedFlows, fmt = "%s", delimiter = ",")
+    logging.debug("Ending removeMissingDetectors()")

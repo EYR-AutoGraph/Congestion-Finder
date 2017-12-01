@@ -1,4 +1,6 @@
 import congestionfinder
+import logging
+logging.basicConfig(format='%(asctime)s %(message)s')
 
 
 class Road:
@@ -34,7 +36,7 @@ class Road:
 
 
 def parseBPSCodesToRoads(bpsCodes):
-    print("Starting parseBPSCodesToRoads()")
+    logging.debug("Starting parseBPSCodesToRoads()")
     result = dict()
     for bpsCode in bpsCodes:
         bpsDetector = congestionfinder.bpsdetector.BPSDetector(bpsCode)
@@ -45,5 +47,5 @@ def parseBPSCodesToRoads(bpsCodes):
         result[roadNumber].addBPSDetector(bpsDetector)
     for key, value in result.items():
         value.indexDetectorSpaces()
-    print("Ending parseBPSCodesToRoads()")
+    logging.debug("Ending parseBPSCodesToRoads()")
     return result

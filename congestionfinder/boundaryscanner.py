@@ -1,15 +1,12 @@
 import numpy
 import matplotlib.pyplot
 import matplotlib.patches
-
-
-def dprint(message, depth):
-    indent = "  " * depth
-    return indent + str(message)
+import logging
+logging.basicConfig(format='%(asctime)s %(message)s')
 
 
 def scanForBoundaries(dataArray, boundaries = None, threshold = 1, depth = 0):
-    dprint("Starting scanForBoundaries()", depth)
+    logging.debug("  " * depth + "Starting scanForBoundaries()")
     if boundaries is None:
         boundaries = [0, dataArray.shape[0] - 1, 0, dataArray.shape[1] - 1]
     boundariesList = []
@@ -24,14 +21,14 @@ def scanForBoundaries(dataArray, boundaries = None, threshold = 1, depth = 0):
         childBoundaries = boundaries[:]
         for i in range(length):
             if arrayBoolean[i] and not started:
-                dprint("Found start: " + str(i), depth)
+                logging.debug("  " * depth + "Found start: " + str(i))
                 if depth % 2:
                     childBoundaries[0] = boundaries[0] + i
                 else:
                     childBoundaries[2] = boundaries[2] + i
                 started = True
             elif not arrayBoolean[i] and started:
-                dprint("Found stop: " + str(i - 1), depth)
+                logging.debug("  " * depth + "Found stop: " + str(i - 1))
                 if depth % 2:
                     childBoundaries[1] = boundaries[0] + i - 1
                 else:
@@ -39,42 +36,42 @@ def scanForBoundaries(dataArray, boundaries = None, threshold = 1, depth = 0):
                 started = False
                 boundariesList.append(childBoundaries[:])
         if started:
-            dprint("Found stop at end.", depth)
+            logging.debug("  " * depth + "Found stop at end.")
             if depth % 2:
                 childBoundaries[1] = boundaries[1]
             else:
                 childBoundaries[3] = boundaries[3]
             boundariesList.append(childBoundaries)
     else:
-        dprint("Length is one", depth)
+        logging.debug("  " * depth + "Length is one")
         boundariesList.append(boundaries)
-    dprint("Ending scanForBoundaries()", depth)
+    logging.debug("  " * depth + "Ending scanForBoundaries()")
     return boundariesList
 
 
 def recursiveScanForBoundaries(dataArray, boundaries = None, depth = 0, parentLength = 0, threshold = 1): # Remove copies?
-    dprint("Starting recursiveScanForBoundaries()", depth)
-    dprint("Direction: " + str(depth % 2), depth)
+    logging.debug("  " * depth + "Starting recursiveScanForBoundaries()")
+    logging.debug("  " * depth + "Direction: " + str(depth % 2))
     result = []
     boundariesList = scanForBoundaries(dataArray, boundaries, threshold, depth)
     if True:  # Add debug logger
         plotCongestionsWithBoundaries(dataArray, boundariesList)
     length = len(boundariesList)
-    dprint("length: " + str(length) + "| parentLength: " + str(parentLength), depth)
+    logging.debug("  " * depth + "length: " + str(length) + "| parentLength: " + str(parentLength))
     if length == 0:
-        dprint("Error: nothing found...", depth) # Throw Exception?
+        logging.debug("  " * depth + "Error: nothing found...") # Throw Exception?
     elif length == 1 and parentLength == 1:
-        dprint("Done: " + str(boundariesList[0]), depth)
+        logging.debug("  " * depth + "Done: " + str(boundariesList[0]))
         return boundariesList
     else:
-        dprint("Scanning children...", depth)
+        logging.debug("  " * depth + "Scanning children...")
         parentLength = length
         childDepth = depth + 1
         for i in range(length):
-            dprint("Child: " + str(i), depth)
+            logging.debug("  " * depth + "Child: " + str(i))
             childBoundaries = boundariesList[i][:]
             result += recursiveScanForBoundaries(dataArray, childBoundaries, childDepth, parentLength, threshold)
-    dprint("Ending recursiveScanForBoundaries()", depth)
+    logging.debug("  " * depth + "Ending recursiveScanForBoundaries()")
     return result
 def filterLargeCongestions(congestionBoundariesList):
     result = []

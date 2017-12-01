@@ -1,5 +1,7 @@
 import csv
 import time as time_module
+import logging
+logging.basicConfig(format='%(asctime)s %(message)s')
 
 
 class Detection:
@@ -37,7 +39,7 @@ class Detection:
 
 
 def readCSVToDetections(fileName) -> set:
-    print("Starting readCSVToDetections()")
+    logging.debug("Starting readCSVToDetections()")
     result = set()
     with open(fileName, "r") as file:
         reader = csv.reader(file, delimiter=" ")
@@ -54,5 +56,5 @@ def readCSVToDetections(fileName) -> set:
                 flow = float(row[8]) / float(row[4])
                 detection = Detection(code, space, time, speed, flow)
                 result.add(detection)
-    print("Ending readCSVToDetections()")
+    logging.debug("Ending readCSVToDetections()")
     return result
