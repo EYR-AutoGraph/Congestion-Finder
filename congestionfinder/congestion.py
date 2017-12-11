@@ -6,9 +6,9 @@ import matplotlib.patches
 import logging
 
 
-def parseSpeedFlowsToCongestions(speeds, flows):
+def parseSpeedFlowsToCongestions(speeds, flows, speedThreshold, flowThreshold):
     logging.debug("Starting parseSpeedFlowsToCongestions()")
-    congestions = speeds / 65  # + flows / 40
+    congestions = speeds / speedThreshold  # + flows / flowThreshold
     logging.debug("Ending parseSpeedFlowsToCongestions()")
     return congestions
 
@@ -27,10 +27,10 @@ def interpolateMissingValues(congestions):
     return congestions
 
 
-def applySmoothingFilter(congestions):
+def applySmoothingFilter(congestions, spaceSmoothing, timeSmoothing):
     logging.debug("Starting applySmoothingFilter()")
     # congestions = scipy.ndimage.filters.gaussian_filter(congestions, 5)
-    congestions = scipy.ndimage.filters.uniform_filter(congestions, [10, 20])
+    congestions = scipy.ndimage.filters.uniform_filter(congestions, [spaceSmoothing, timeSmoothing])
     logging.debug("Ending applySmoothingFilter()")
     return congestions
 
