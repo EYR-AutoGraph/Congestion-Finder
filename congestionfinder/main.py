@@ -1,13 +1,14 @@
-import congestionfinder.bpsdetector
-import congestionfinder.road
-import congestionfinder.detection
-import congestionfinder.speedflow
-import congestionfinder.congestion
-import congestionfinder.boundaryscanner
 import logging
 
+import congestionfinder.bpsdetector
+import congestionfinder.congestion
+import congestionfinder.detection
+import congestionfinder.road
+import congestionfinder.speedflow
+import patchfinder.patch
 
-def findCongestion(date, roadNumber, roadsFileName, detectionsFileName, outputDirectory):
+
+def findCongestion(date, roadNumber, roadsFileName, detectionsFileName, outputDirectory, marginSpace, marginTime):
     logging.debug("Starting findCongestion()")
     bpsCodes = congestionfinder.bpsdetector.readCSVToBPSCodes(roadsFileName)
     roads = congestionfinder.road.parseBPSCodesToRoads(bpsCodes)
@@ -22,12 +23,14 @@ def findCongestion(date, roadNumber, roadsFileName, detectionsFileName, outputDi
                                                                            flowsWorkingDetectors)
     congestionsWithoutMissingValues = congestionfinder.congestion.interpolateMissingValues(congestions)
     congestionsSmoothed = congestionfinder.congestion.applySmoothingFilter(congestionsWithoutMissingValues)
-    congestionBoundariesList = congestionfinder.boundaryscanner.recursiveScanForBoundaries(congestionsSmoothed)
-    congestionBoundariesListFiltered = congestionfinder.boundaryscanner.filterLargeCongestions(congestionBoundariesList)
-    congestionBoundariesListWithMargins = congestionfinder.boundaryscanner.addMargins(congestionBoundariesListFiltered,
-                                                                                      minSpaceIndex, maxSpaceIndex,
-                                                                                      minTimeIndex, maxTimeIndex)
-    congestionfinder.speedflow.writeSpeedsAndFlowsToCSV(speeds, flows, congestionBoundariesListWithMargins,
+    congestionsBoolean = congestionsSmoothed < 1
+    congestionPatches = patchfinder.patch.findPatches(congestionsBoolean)
+    congestionPatchesFiltered = congestionfinder.congestion.filterLargeCongestions(congestionPatches)
+    congestionPatchesWithMargins = congestionfinder.congestion.addMargins(congestionPatchesFiltered,
+                                                                          marginSpace, marginTime,
+                                                                          minSpaceIndex, maxSpaceIndex,
+                                                                          minTimeIndex, maxTimeIndex)
+    congestionfinder.speedflow.writeSpeedsAndFlowsToCSV(speeds, flows, congestionPatchesWithMargins,
                                                         outputDirectory, date, roadNumber)
     logging.debug("Ending findCongestion()")
 
@@ -50,4 +53,6 @@ if __name__ == "__main__":
     roadsFileName = "../tests/data/BPS_20171120.txt"
     detectionsFileName = "../tests/data/A2_20171120.txt"
     outputDirectory = "../tests/data"
-    findCongestion(date, roadNumber, roadsFileName, detectionsFileName, outputDirectory)
+    marginSpace = 10
+    marginTime = 20
+    findCongestion(date, roadNumber, roadsFileName, detectionsFileName, outputDirectory, marginSpace, marginTime)

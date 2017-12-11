@@ -1,6 +1,8 @@
 import numpy
 import scipy.interpolate
 import scipy.ndimage
+import matplotlib.pyplot
+import matplotlib.patches
 import logging
 
 
@@ -31,3 +33,44 @@ def applySmoothingFilter(congestions):
     congestions = scipy.ndimage.filters.uniform_filter(congestions, [10, 20])
     logging.debug("Ending applySmoothingFilter()")
     return congestions
+
+
+def filterLargeCongestions(patches, threshold=1000):
+    logging.debug("Starting filterLargeCongestions()")
+    result = []
+    for patch in patches:
+        if patch.size() > threshold:
+            result.append(patch)
+    logging.debug("Ending filterLargeCongestions()")
+    return result
+
+
+def addMargins(patches, marginSpace, marginTime, minSpaceIndex, maxSpaceIndex, minTimeIndex, maxTimeIndex):
+    for patch in patches:
+        patch.setXStart(max(minSpaceIndex, patch.getXStart() - marginSpace))
+        patch.setXEnd(min(maxSpaceIndex, patch.getXEnd() + marginSpace))
+        patch.setYStart(max(minTimeIndex, patch.getYStart() - marginTime))
+        patch.setYEnd(min(maxTimeIndex, patch.getYEnd() + marginTime))
+    return patches
+
+
+def addBoundaries(ax, boundaries):
+    rect = matplotlib.patches.Rectangle((
+        boundaries[2] - 0.5,
+        boundaries[0] - 0.5),
+        boundaries[3] - boundaries[2] + 1,
+        boundaries[1] - boundaries[0] + 1,
+        linewidth=1,
+        edgecolor="r",
+        hatch="//",
+        facecolor="none")
+    ax.add_patch(rect)
+
+
+def plotCongestionsWithBoundaries(congestions, patches):
+    congestionBoundariesList = patches.getPatches()
+    fig, ax = matplotlib.pyplot.subplots(1)
+    ax.imshow(congestions, aspect = "auto")
+    for i in range(len(congestionBoundariesList)):
+        addBoundaries(ax, congestionBoundariesList[i])
+    matplotlib.pyplot.show()

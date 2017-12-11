@@ -54,17 +54,17 @@ def removeMissingDetectors(speeds, flows):
     return speeds, flows, mask
 
 
-def writeSpeedsAndFlowsToCSV(speeds, flows, congestionBoundariesList, outputDirectory, date, roadNumber):
+def writeSpeedsAndFlowsToCSV(speeds, flows, patches, outputDirectory, date, roadNumber):
     logging.debug("Starting writeSpeedsAndFlowsToCSV()")
-    for congestionBoundaries in congestionBoundariesList:
-        minSpaceIndex = congestionBoundaries[0] # Index to Space
-        maxSpaceIndex = congestionBoundaries[1]
-        minTimeIndex = congestionBoundaries[2] # Index to Time
-        maxTimeIndex = congestionBoundaries[3]
+    for patch in patches:
+        minSpaceIndex = patch.getXStart()  # Index to Space
+        maxSpaceIndex = patch.getXEnd()
+        minTimeIndex = patch.getYStart()  # Index to Time
+        maxTimeIndex = patch.getYEnd()
         speedsFileName = outputDirectory + "\\" + str(date) + "_" + str(roadNumber) + "_s_" + str(minSpaceIndex) + "-" + str(maxSpaceIndex) + "_" + str(minTimeIndex) + "-" + str(maxTimeIndex) + ".csv.gz"
         flowsFileName = outputDirectory + "\\" + str(date) + "_" + str(roadNumber) + "_f_" + str(minSpaceIndex) + "-" + str(maxSpaceIndex) + "_" + str(minTimeIndex) + "-" + str(maxTimeIndex) + ".csv.gz"
         boundedSpeeds = speeds[minSpaceIndex:maxSpaceIndex, minTimeIndex:maxTimeIndex]
         boundedFlows = flows[minSpaceIndex:maxSpaceIndex, minTimeIndex:maxTimeIndex]
-        numpy.savetxt(speedsFileName, boundedSpeeds, fmt = "%s", delimiter = ",")
-        numpy.savetxt(flowsFileName, boundedFlows, fmt = "%s", delimiter = ",")
+        numpy.savetxt(speedsFileName, boundedSpeeds, fmt="%s", delimiter=",")
+        numpy.savetxt(flowsFileName, boundedFlows, fmt="%s", delimiter=",")
     logging.debug("Ending writeSpeedsAndFlowsToCSV()")
