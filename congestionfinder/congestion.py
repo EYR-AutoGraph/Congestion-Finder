@@ -54,12 +54,12 @@ def addMargins(patches, marginSpace, marginTime, minSpaceIndex, maxSpaceIndex, m
     return patches
 
 
-def addBoundaries(ax, boundaries):
+def addBoundaries(ax, patch):
     rect = matplotlib.patches.Rectangle((
-        boundaries[2] - 0.5,
-        boundaries[0] - 0.5),
-        boundaries[3] - boundaries[2] + 1,
-        boundaries[1] - boundaries[0] + 1,
+        patch.getYStart() - 0.5,
+        patch.getXStart() - 0.5),
+        patch.yLength(),
+        patch.xLength(),
         linewidth=1,
         edgecolor="r",
         hatch="//",
@@ -67,10 +67,9 @@ def addBoundaries(ax, boundaries):
     ax.add_patch(rect)
 
 
-def plotCongestionsWithBoundaries(congestions, patches):
-    congestionBoundariesList = patches.getPatches()
+def plotCongestionsWithPatches(congestions, patches):
     fig, ax = matplotlib.pyplot.subplots(1)
-    ax.imshow(congestions, aspect = "auto")
-    for i in range(len(congestionBoundariesList)):
-        addBoundaries(ax, congestionBoundariesList[i])
+    ax.imshow(congestions, aspect="auto")
+    for patch in patches:
+        addBoundaries(ax, patch)
     matplotlib.pyplot.show()
