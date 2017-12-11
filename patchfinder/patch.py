@@ -118,6 +118,7 @@ def findPatches(booleanArray, patch=None, depth=0, parentLength=0):
     logging.debug("  " * depth + "Direction: " + str(depth % 2))
     result = []
     patches = scanForBoundaries(booleanArray, patch, depth)
+    logging.debug("  " * depth + "Found patches: " + str([patch.asArray() for patch in patches]))
     length = len(patches)
     logging.debug("  " * depth + "length: " + str(length) + "| parentLength: " + str(parentLength))
     if length == 0:
