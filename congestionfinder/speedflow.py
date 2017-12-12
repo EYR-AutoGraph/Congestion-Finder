@@ -1,4 +1,5 @@
 import numpy
+import copy
 import logging
 
 
@@ -36,6 +37,15 @@ def parseDetectionsToSpeedsAndFlows(detections, road):
     return speeds, flows, minFoundSpaceIndex, maxFoundSpaceIndex, minFoundTimeIndex, maxFoundTimeIndex
 
 
+def removeMissingDetectors(speeds, flows):
+    logging.debug("Starting removeMissingDetectors()")
+    mask = ~numpy.isnan(speeds).all(axis=1)
+    speeds = speeds[mask]
+    flows = flows[mask]
+    logging.debug("Ending removeMissingDetectors()")
+    return speeds, flows, mask
+
+
 def removeLowFlowTimes(speeds, flows):
     logging.debug("Starting removeLowFlowTimes()")
     mask = numpy.nanmean(flows, axis=0) > 10
@@ -45,13 +55,18 @@ def removeLowFlowTimes(speeds, flows):
     return speeds, flows, mask
 
 
-def removeMissingDetectors(speeds, flows):
-    logging.debug("Starting removeMissingDetectors()")
-    mask = ~numpy.isnan(speeds).all(axis=1)
-    speeds = speeds[mask]
-    flows = flows[mask]
-    logging.debug("Ending removeMissingDetectors()")
-    return speeds, flows, mask
+def unmaskPatches(patches, maskSpace, maskTime):
+    logging.debug("Starting unmaskPatches()")
+    spaceMap = numpy.nonzero(maskSpace)[0]
+    timeMap = numpy.nonzero(maskTime)[0]
+    result = copy.deepcopy(patches)
+    for patch in result:
+        patch.setXStart(spaceMap[patch.getXStart() - 1])
+        patch.setXEnd(spaceMap[patch.getXEnd() - 1])
+        patch.setYStart(timeMap[patch.getYStart() - 1])
+        patch.setYEnd(timeMap[patch.getYEnd() - 1])
+    logging.debug("Ending unmaskPatches()")
+    return result
 
 
 def writeSpeedsAndFlowsToCSV(speeds, flows, patches, outputDirectory, date, roadNumber):

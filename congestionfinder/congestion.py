@@ -1,6 +1,7 @@
 import numpy
 import scipy.interpolate
 import scipy.ndimage
+import copy
 import matplotlib.pyplot
 import matplotlib.patches
 import logging
@@ -46,12 +47,15 @@ def filterLargeCongestions(patches, threshold=1000):
 
 
 def addMargins(patches, marginSpace, marginTime, minSpaceIndex, maxSpaceIndex, minTimeIndex, maxTimeIndex):
-    for patch in patches:
+    logging.debug("Starting addMargins()")
+    result = copy.deepcopy(patches)
+    for patch in result:
         patch.setXStart(max(minSpaceIndex, patch.getXStart() - marginSpace))
         patch.setXEnd(min(maxSpaceIndex, patch.getXEnd() + marginSpace))
         patch.setYStart(max(minTimeIndex, patch.getYStart() - marginTime))
         patch.setYEnd(min(maxTimeIndex, patch.getYEnd() + marginTime))
-    return patches
+    logging.debug("Ending addMargins()")
+    return result
 
 
 def addBoundaries(ax, patch):

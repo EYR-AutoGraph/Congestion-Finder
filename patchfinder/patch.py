@@ -55,7 +55,7 @@ class Patch:
         return self.yEnd + 1 - self.yStart
 
     def size(self) -> int:
-        return (self.xEnd - self.xStart) * (self.yEnd - self.yStart)
+        return (self.xEnd + 1 - self.xStart) * (self.yEnd + 1 - self.yStart)
 
     def __str__(self):
         template = "xStart: {} | xEnd: {} | yStart: {} | yEnd: {}"

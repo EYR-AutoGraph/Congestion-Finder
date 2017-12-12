@@ -8,7 +8,8 @@ import congestionfinder.speedflow
 import patchfinder.patch
 
 
-def findCongestion(date, roadNumber, roadsFileName, detectionsFileName, outputDirectory, speedThreshold, flowThreshold, spaceSmoothing, timeSmoothing, marginSpace, marginTime):
+def findCongestion(date, roadNumber, roadsFileName, detectionsFileName, outputDirectory, speedThreshold, flowThreshold,
+                   spaceSmoothing, timeSmoothing, marginSpace, marginTime):
     logging.debug("Starting findCongestion()")
     bpsCodes = congestionfinder.bpsdetector.readCSVToBPSCodes(roadsFileName)
     roads = congestionfinder.road.parseBPSCodesToRoads(bpsCodes)
@@ -16,21 +17,27 @@ def findCongestion(date, roadNumber, roadsFileName, detectionsFileName, outputDi
     speeds, flows, minSpaceIndex, maxSpaceIndex, minTimeIndex, maxTimeIndex = congestionfinder.speedflow.parseDetectionsToSpeedsAndFlows(
         detections, roads[roadNumber])
     speedsHighFlow, flowsHighFlow, maskHighFlow = congestionfinder.speedflow.removeLowFlowTimes(speeds,
-                                                                                                flows)  ## Do something with Mask
+                                                                                                flows)
     speedsWorkingDetectors, flowsWorkingDetectors, maskWorkingDetectors = congestionfinder.speedflow.removeMissingDetectors(
-        speedsHighFlow, flowsHighFlow)  ## Do something with Mask
+        speedsHighFlow, flowsHighFlow)
     congestions = congestionfinder.congestion.parseSpeedFlowsToCongestions(speedsWorkingDetectors,
-                                                                           flowsWorkingDetectors, speedThreshold, flowThreshold)
+                                                                           flowsWorkingDetectors, speedThreshold,
+                                                                           flowThreshold)
     congestionsWithoutMissingValues = congestionfinder.congestion.interpolateMissingValues(congestions)
-    congestionsSmoothed = congestionfinder.congestion.applySmoothingFilter(congestionsWithoutMissingValues, spaceSmoothing, timeSmoothing)
+    congestionsSmoothed = congestionfinder.congestion.applySmoothingFilter(congestionsWithoutMissingValues,
+                                                                           spaceSmoothing, timeSmoothing)
     congestionsBoolean = congestionsSmoothed < 1
     congestionPatches = patchfinder.patch.findPatches(congestionsBoolean)
     congestionPatchesFiltered = congestionfinder.congestion.filterLargeCongestions(congestionPatches)
+    maxSpaceIndex = len(maskWorkingDetectors[maskWorkingDetectors])  # TODO: Improve this
+    maxTimeIndex = len(maskHighFlow[maskHighFlow])  # TODO: Improve this
     congestionPatchesWithMargins = congestionfinder.congestion.addMargins(congestionPatchesFiltered,
                                                                           marginSpace, marginTime,
                                                                           minSpaceIndex, maxSpaceIndex,
                                                                           minTimeIndex, maxTimeIndex)
-    congestionfinder.speedflow.writeSpeedsAndFlowsToCSV(speeds, flows, congestionPatchesWithMargins,
+    speedFlowPatches = congestionfinder.speedflow.unmaskPatches(congestionPatchesWithMargins, maskWorkingDetectors,
+                                                                maskHighFlow)
+    congestionfinder.speedflow.writeSpeedsAndFlowsToCSV(speeds, flows, speedFlowPatches,
                                                         outputDirectory, date, roadNumber)
     logging.debug("Ending findCongestion()")
 
@@ -59,4 +66,5 @@ if __name__ == "__main__":
     timeSmoothing = 20
     marginSpace = spaceSmoothing  # probably always the same
     marginTime = timeSmoothing  # probably always the same
-    findCongestion(date, roadNumber, roadsFileName, detectionsFileName, outputDirectory, speedThreshold, flowThreshold, spaceSmoothing, timeSmoothing, marginSpace, marginTime)
+    findCongestion(date, roadNumber, roadsFileName, detectionsFileName, outputDirectory, speedThreshold, flowThreshold,
+                   spaceSmoothing, timeSmoothing, marginSpace, marginTime)
