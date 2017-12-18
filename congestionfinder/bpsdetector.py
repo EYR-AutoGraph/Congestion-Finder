@@ -42,9 +42,9 @@ def readCSVToBPSCodes(fileName: str) -> object:
     logging.debug("Starting readCSVToBPSCodes()")
     result = []
     with open(fileName, "r") as file:
-        reader = csv.reader(file)
+        reader = csv.reader(file, delimiter=" ")
         for row in reader:
-            if row[3] == "R":
+            if len(row) > 1 and row[3] == "R":
                 result.append(row[0])
     logging.debug("Ending readCSVToBPSCodes()")
     return result

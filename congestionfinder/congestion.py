@@ -1,7 +1,6 @@
 import numpy
 import scipy.interpolate
 import scipy.ndimage
-import copy
 import matplotlib.pyplot
 import matplotlib.patches
 import logging
@@ -22,8 +21,8 @@ def interpolateMissingValues(congestions):
     xx, yy = numpy.meshgrid(x, y)
     x1 = xx[~congestionsMask.mask]
     y1 = yy[~congestionsMask.mask]
-    newarr = congestions[~congestionsMask.mask]
-    congestions = scipy.interpolate.griddata((x1, y1), newarr.ravel(), (xx, yy), method = "cubic")
+    congestionsMasked = congestions[~congestionsMask.mask]
+    congestions = scipy.interpolate.griddata((x1, y1), congestionsMasked.ravel(), (xx, yy), method="cubic")
     logging.debug("Ending interpolateMissingValues()")
     return congestions
 
@@ -34,28 +33,6 @@ def applySmoothingFilter(congestions, spaceSmoothing, timeSmoothing):
     congestions = scipy.ndimage.filters.uniform_filter(congestions, [spaceSmoothing, timeSmoothing])
     logging.debug("Ending applySmoothingFilter()")
     return congestions
-
-
-def filterLargeCongestions(patches, threshold=1000):
-    logging.debug("Starting filterLargeCongestions()")
-    result = []
-    for patch in patches:
-        if patch.size() > threshold:
-            result.append(patch)
-    logging.debug("Ending filterLargeCongestions()")
-    return result
-
-
-def addMargins(patches, marginSpace, marginTime, minSpaceIndex, maxSpaceIndex, minTimeIndex, maxTimeIndex):
-    logging.debug("Starting addMargins()")
-    result = copy.deepcopy(patches)
-    for patch in result:
-        patch.setXStart(max(minSpaceIndex, patch.getXStart() - marginSpace))
-        patch.setXEnd(min(maxSpaceIndex, patch.getXEnd() + marginSpace))
-        patch.setYStart(max(minTimeIndex, patch.getYStart() - marginTime))
-        patch.setYEnd(min(maxTimeIndex, patch.getYEnd() + marginTime))
-    logging.debug("Ending addMargins()")
-    return result
 
 
 def addBoundaries(ax, patch):

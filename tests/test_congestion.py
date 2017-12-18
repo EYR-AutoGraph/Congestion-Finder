@@ -1,39 +1,25 @@
 import unittest
+import numpy
 import congestionfinder.congestion
-import patchfinder.patch
 import logging
 
 logging.getLogger().level = logging.DEBUG
 
 
 class TestCongestion(unittest.TestCase):
-    def test_filterLargeCongestions(self):
-        logging.debug("Starting test_filterLargeCongestions()")
-        input = patchfinder.patch.Patch(1, 999, 1, 999)
-        patch1 = patchfinder.patch.Patch(1, 2, 3, 4)
-        patch2 = patchfinder.patch.Patch(5, 5, 5, 5)
-        expected = input
-        output = congestionfinder.congestion.filterLargeCongestions([input, patch1, patch2], 100)[0]
-        logging.debug("input: " + str(input))
+    def test_parseSpeedFlowsToCongestions(self):
+        logging.debug("Starting test_parseSpeedFlowsToCongestions()")
+        inputSpeed = numpy.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+        inputFlow = numpy.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+        speedThreshold = 10
+        flowThreshold = 10
+        expected = numpy.array([[.1, .2, .3], [.4, .5, .6], [.7, .8, .9]])
+        output = congestionfinder.congestion.parseSpeedFlowsToCongestions(inputSpeed, inputFlow, speedThreshold, flowThreshold)
+        logging.debug("input: " + str(inputSpeed))
         logging.debug("expected: " + str(expected))
         logging.debug("output: " + str(output))
-        self.assertEqual(expected, output)
-        logging.debug("Ending test_filterLargeCongestions()")
-
-    def test_addMargins(self):
-        logging.debug("Starting test_addMargins()")
-        patch1 = patchfinder.patch.Patch(1, 2, 3, 4)
-        patch2 = patchfinder.patch.Patch(5, 5, 5, 5)
-        input = [patch1, patch2]
-        patch2 = patchfinder.patch.Patch(0, 4, 0, 7)
-        patch3 = patchfinder.patch.Patch(3, 6, 2, 8)
-        expected = [patch2, patch3]
-        output = congestionfinder.congestion.addMargins(input, 2, 3, 0, 6, 0, 10)
-        logging.debug("input: " + " - ".join(str(x) for x in input))
-        logging.debug("expected: " + " - ".join(str(x) for x in expected))
-        logging.debug("output: " + " - ".join(str(x) for x in output))
-        self.assertEqual(expected, output)
-        logging.debug("Ending test_addMargins()")
+        numpy.testing.assert_array_equal(expected, output)
+        logging.debug("Ending test_parseSpeedFlowsToCongestions()")
 
 
 if __name__ == '__main__':

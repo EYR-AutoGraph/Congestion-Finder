@@ -7,7 +7,7 @@ def parseDetectionsToSpeedsAndFlows(detections, road):
     logging.debug("Starting parseDetectionsToSpeedFlows()")
     spaceToSpaceIndex = road.getSpaceToSpaceIndex()
     maxSpaceIndex = max(spaceToSpaceIndex.values()) + 1
-    maxTimeIndex = 1440 # Trivial now, but perhaps important later.
+    maxTimeIndex = 1440  # Trivial now, but perhaps important later.
     speeds = numpy.full((maxSpaceIndex, maxTimeIndex), numpy.nan)
     flows = numpy.full((maxSpaceIndex, maxTimeIndex), numpy.nan)
     minFoundSpaceIndex = maxSpaceIndex
@@ -46,9 +46,9 @@ def removeMissingDetectors(speeds, flows):
     return speeds, flows, mask
 
 
-def removeLowFlowTimes(speeds, flows):
+def removeLowFlowTimes(speeds, flows, lowFlowThreshold=10):
     logging.debug("Starting removeLowFlowTimes()")
-    mask = numpy.nanmean(flows, axis=0) > 10
+    mask = numpy.nanmean(flows, axis=0) > lowFlowThreshold
     speeds = speeds[:, mask]
     flows = flows[:, mask]
     logging.debug("Ending removeLowFlowTimes()")
@@ -69,17 +69,35 @@ def unmaskPatches(patches, maskSpace, maskTime):
     return result
 
 
-def writeSpeedsAndFlowsToCSV(speeds, flows, patches, outputDirectory, date, roadNumber):
+def addMargins(patches, marginSpace, marginTime, minSpaceIndex, maxSpaceIndex, minTimeIndex, maxTimeIndex):
+    logging.debug("Starting addMargins()")
+    result = copy.deepcopy(patches)
+    for patch in result:
+        patch.setXStart(max(minSpaceIndex, patch.getXStart() - marginSpace))
+        patch.setXEnd(min(maxSpaceIndex, patch.getXEnd() + marginSpace))
+        patch.setYStart(max(minTimeIndex, patch.getYStart() - marginTime))
+        patch.setYEnd(min(maxTimeIndex, patch.getYEnd() + marginTime))
+    logging.debug("Ending addMargins()")
+    return result
+
+
+def writeSpeedsAndFlowsToCSV(speeds, flows, patches, outputDirectory, date, road):
     logging.debug("Starting writeSpeedsAndFlowsToCSV()")
+    roadNumber = road.getRoadNumber()
+    spaceIndexToSpace = road.getSpaceIndexToSpace()
     for patch in patches:
         minSpaceIndex = patch.getXStart()  # Index to Space
         maxSpaceIndex = patch.getXEnd()
         minTimeIndex = patch.getYStart()  # Index to Time
         maxTimeIndex = patch.getYEnd()
-        speedsFileName = outputDirectory + "\\" + str(date) + "_" + str(roadNumber) + "_s_" + str(minSpaceIndex) + "-" + str(maxSpaceIndex) + "_" + str(minTimeIndex) + "-" + str(maxTimeIndex) + ".csv.gz"
-        flowsFileName = outputDirectory + "\\" + str(date) + "_" + str(roadNumber) + "_f_" + str(minSpaceIndex) + "-" + str(maxSpaceIndex) + "_" + str(minTimeIndex) + "-" + str(maxTimeIndex) + ".csv.gz"
-        boundedSpeeds = speeds[minSpaceIndex:maxSpaceIndex, minTimeIndex:maxTimeIndex]
-        boundedFlows = flows[minSpaceIndex:maxSpaceIndex, minTimeIndex:maxTimeIndex]
-        numpy.savetxt(speedsFileName, boundedSpeeds, fmt="%s", delimiter=",")
-        numpy.savetxt(flowsFileName, boundedFlows, fmt="%s", delimiter=",")
+        maxSpace = spaceIndexToSpace[maxSpaceIndex]
+        minSpace = spaceIndexToSpace[minSpaceIndex]
+        minTime = minTimeIndex  # Trivial now, but perhaps important later
+        maxTime = maxTimeIndex  # Trivial now, but perhaps important later
+        speedsFileName = outputDirectory + "\\" + str(date) + "_" + str(roadNumber) + "_s_" + str(minSpace) + "-" + str(maxSpace) + "_" + str(minTime) + "-" + str(maxTime) + ".csv.gz"
+        flowsFileName = outputDirectory + "\\" + str(date) + "_" + str(roadNumber) + "_f_" + str(minSpace) + "-" + str(maxSpace) + "_" + str(minTime) + "-" + str(maxTime) + ".csv.gz"
+        speedsPatch = speeds[minSpaceIndex:maxSpaceIndex, minTimeIndex:maxTimeIndex]
+        flowsPatch = flows[minSpaceIndex:maxSpaceIndex, minTimeIndex:maxTimeIndex]
+        numpy.savetxt(speedsFileName, speedsPatch, fmt="%s", delimiter=",")
+        numpy.savetxt(flowsFileName, flowsPatch, fmt="%s", delimiter=",")
     logging.debug("Ending writeSpeedsAndFlowsToCSV()")

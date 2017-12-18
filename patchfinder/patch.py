@@ -122,7 +122,7 @@ def findPatches(booleanArray, patch=None, depth=0, parentLength=0):
     length = len(patches)
     logging.debug("  " * depth + "length: " + str(length) + "| parentLength: " + str(parentLength))
     if length == 0:
-        logging.debug("  " * depth + "Error: nothing found...")  # TODO: Throw Exception?
+        logging.error("  " * depth + "Nothing found...")  # TODO: Throw Exception?
     elif length == 1 and parentLength == 1:
         logging.debug("  " * depth + "Done: " + str(patches[0]))
         result = patches
@@ -135,4 +135,14 @@ def findPatches(booleanArray, patch=None, depth=0, parentLength=0):
             childPatch = patches[i]
             result += findPatches(booleanArray, childPatch, childDepth, parentLength)
     logging.debug("  " * depth + "Ending findPatches()")
+    return result
+
+
+def filterLargePatches(patches, threshold=1000):
+    logging.debug("Starting filterLargePatches()")
+    result = []
+    for patch in patches:
+        if patch.size() > threshold:
+            result.append(patch)
+    logging.debug("Ending filterLargePatches()")
     return result

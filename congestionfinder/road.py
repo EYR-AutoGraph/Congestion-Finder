@@ -6,6 +6,7 @@ class Road:
     roadNumber = None
     bpsDetectors = None
     spaceToSpaceIndex = None
+    spaceIndexToSpace = None
 
     def __init__(self, roadNumber):
         self.roadNumber = roadNumber
@@ -21,6 +22,9 @@ class Road:
     def getSpaceToSpaceIndex(self) -> dict:
         return self.spaceToSpaceIndex
 
+    def getSpaceIndexToSpace(self) -> list:
+        return self.spaceIndexToSpace
+
     def addBPSDetector(self, bpsDetector):
         self.bpsDetectors.add(bpsDetector)
 
@@ -28,9 +32,9 @@ class Road:
         spaceSet = set()
         for bpsDetector in self.bpsDetectors:
             spaceSet.add(bpsDetector.getMeter())
-        sortedSpaceSet = sorted(spaceSet)
-        for spaceIndex in range(len(sortedSpaceSet)):
-            self.spaceToSpaceIndex[sortedSpaceSet[spaceIndex]] = spaceIndex
+        self.spaceIndexToSpace = sorted(spaceSet)
+        for spaceIndex in range(len(self.spaceIndexToSpace)):
+            self.spaceToSpaceIndex[self.spaceIndexToSpace[spaceIndex]] = spaceIndex
 
     def __str__(self):
         template = "roadNumber: {} | len(bpsDetectors): {} | len(spaceToSpaceIndex): {}"
