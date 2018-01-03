@@ -61,10 +61,10 @@ def unmaskPatches(patches, maskSpace, maskTime):
     timeMap = numpy.nonzero(maskTime)[0]
     result = copy.deepcopy(patches)
     for patch in result:
-        patch.setXStart(spaceMap[patch.getXStart() - 1])
-        patch.setXEnd(spaceMap[patch.getXEnd() - 1])
-        patch.setYStart(timeMap[patch.getYStart() - 1])
-        patch.setYEnd(timeMap[patch.getYEnd() - 1])
+        patch.setXStart(spaceMap[patch.getXStart()])
+        patch.setXEnd(spaceMap[patch.getXEnd()])
+        patch.setYStart(timeMap[patch.getYStart()])
+        patch.setYEnd(timeMap[patch.getYEnd()])
     logging.debug("Ending unmaskPatches()")
     return result
 

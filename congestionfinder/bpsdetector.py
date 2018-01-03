@@ -38,13 +38,14 @@ def extractAttribute(bpsCode: str, startBit: int, endBit: int) -> int:
     return int(bpsCode, 16) >> (80 - endBit) & int("1" * (endBit - startBit), 2)
 
 
-def readCSVToBPSCodes(fileName: str) -> object:
-    logging.debug("Starting readCSVToBPSCodes()")
+def readCSVToBPSDetectors(fileName: str) -> object:
+    logging.debug("Starting readCSVToBPSDetectors()")
     result = []
     with open(fileName, "r") as file:
         reader = csv.reader(file, delimiter=" ")
         for row in reader:
             if len(row) > 1 and row[3] == "R":
-                result.append(row[0])
-    logging.debug("Ending readCSVToBPSCodes()")
+                bpsDetector = BPSDetector(row[0])
+                result.append(bpsDetector)
+    logging.debug("Ending readCSVToBPSDetectors()")
     return result

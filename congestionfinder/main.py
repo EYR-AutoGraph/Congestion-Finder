@@ -12,8 +12,8 @@ def findCongestion(date, roadNumber, roadsFileName, detectionsFileName, outputDi
                    speedThreshold, flowThreshold, spaceSmoothing, timeSmoothing, patchSizeThreshold, marginSpace,
                    marginTime):
     logging.debug("Starting findCongestion()")
-    bpsCodes = congestionfinder.bpsdetector.readCSVToBPSCodes(roadsFileName)  # TODO: parse directly to BPSDetector
-    roads = congestionfinder.road.parseBPSCodesToRoads(bpsCodes)
+    bpsDetectors = congestionfinder.bpsdetector.readCSVToBPSDetectors(roadsFileName)
+    roads = congestionfinder.road.parseBPSDetectorsToRoads(bpsDetectors)
     road = roads[roadNumber]
     detections = congestionfinder.detection.readCSVToDetections(detectionsFileName)  # TODO: why not use the BPS code
     speeds, flows, minSpaceIndex, maxSpaceIndex, minTimeIndex, maxTimeIndex = \
@@ -43,7 +43,7 @@ def findCongestion(date, roadNumber, roadsFileName, detectionsFileName, outputDi
     logging.debug("Ending findCongestion()")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # TODO: Add road direction
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
     consoleHandler = logging.StreamHandler()

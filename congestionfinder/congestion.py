@@ -48,7 +48,7 @@ def addBoundaries(ax, patch):
     ax.add_patch(rect)
 
 
-def plotCongestionsWithPatches(congestions, patches):
+def plotCongestionsWithPatches(congestions, patches):  # TODO: move to docs/utils?
     fig, ax = matplotlib.pyplot.subplots(1)
     ax.imshow(congestions, aspect="auto")
     for patch in patches:
