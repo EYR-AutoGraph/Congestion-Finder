@@ -35,7 +35,7 @@ def applySmoothingFilter(congestions, spaceSmoothing, timeSmoothing):
     return congestions
 
 
-def addBoundaries(ax, patch):
+def addBoundaries(ax, patch):  # TODO: move to docs/utils?
     rect = matplotlib.patches.Rectangle((
         patch.getYStart() - 0.5,
         patch.getXStart() - 0.5),

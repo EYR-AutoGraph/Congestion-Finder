@@ -49,7 +49,7 @@ def parseBPSDetectorsToRoads(bpsDetectors):
             road = Road(roadNumber)
             result[roadNumber] = road
         result[roadNumber].addBPSDetector(bpsDetector)
-    for key, value in result.items():
+    for value in result.values():
         value.indexDetectorSpaces()
     logging.debug("Ending parseBPSDetectorsToRoads()")
     return result

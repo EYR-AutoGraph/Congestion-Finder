@@ -88,6 +88,29 @@ class TestRoad(unittest.TestCase):
         self.assertEqual(expected, output)
         logging.debug("Ending test_getSpaceToSpaceIndex()")
 
+    def test_parseBPSDetectorsToRoads(self):
+        logging.debug("Starting test_parseBPSDetectorsToRoads()")
+        bpsDetector1 = congestionfinder.bpsdetector.BPSDetector("10D00204C00038200005")
+        bpsDetector2 = congestionfinder.bpsdetector.BPSDetector("10D00204D037D007000B")
+        bpsDetector3 = congestionfinder.bpsdetector.BPSDetector("10D01005381ED0070007")
+        input = [bpsDetector1, bpsDetector2, bpsDetector3]
+        road1 = congestionfinder.road.Road(2)
+        road2 = congestionfinder.road.Road(16)
+        road1.addBPSDetector(bpsDetector1)
+        road1.addBPSDetector(bpsDetector2)
+        road2.addBPSDetector(bpsDetector3)
+        road1.indexDetectorSpaces()
+        road2.indexDetectorSpaces()
+        expected = {2: road1, 16: road2}
+        output = congestionfinder.road.parseBPSDetectorsToRoads(input)
+        logging.debug("expected[2]: " + str(expected[2]))
+        logging.debug("output[2]: " + str(output[2]))
+        logging.debug("expected[16]: " + str(expected[16]))
+        logging.debug("output[16]: " + str(output[16]))
+        self.assertEqual(str(expected[2]), str(output[2]))
+        self.assertEqual(str(expected[16]), str(output[16]))
+        logging.debug("Ending test_parseBPSDetectorsToRoads()")
+
 
 if __name__ == '__main__':
     unittest.main()
